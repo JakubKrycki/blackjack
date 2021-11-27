@@ -97,7 +97,6 @@ public class Game {
             this.clearHands();
         }
         System.out.println("No money left");
-        //TODO cardcounter
         //TODO exceptions handling
         //TODO double
     }
