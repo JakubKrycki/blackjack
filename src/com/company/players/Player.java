@@ -12,7 +12,7 @@ public abstract class Player {
     protected String username = "";
     protected List<Card> hand = new ArrayList<>();
 
-    public abstract void showInfo();
+    public abstract void showInfo(List<Card> hand);
 
     public int numOfAces(){
         int num=0;

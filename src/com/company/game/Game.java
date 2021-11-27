@@ -1,8 +1,12 @@
 package com.company.game;
 
+import com.company.card.Card;
 import com.company.deck.Deck;
 import com.company.players.Croupier;
 import com.company.players.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
 
@@ -22,9 +26,9 @@ public class Game {
         this.deck = new Deck(numOfSets);
     }
 
-    public void showInfo(){
-        this.croupier.showInfo();
-        this.user.showInfo();
+    public void showInfo(List<Card> playerHand){
+        this.croupier.showInfo(this.croupier.getHand());
+        this.user.showInfo(playerHand);
     }
 
     public void giveCards(){
@@ -56,25 +60,42 @@ public class Game {
         }
     }
 
+    public void userRound(List<Card> hand){
+        boolean hasAMove;
+        char move;
+        do {//moves on main hand
+            System.out.println("-------------------------------");
+            this.showInfo(hand);
+            move = this.user.askForMove(deck, hand);
+            hasAMove = this.user.hasMove(deck, hand);
+        }while(hasAMove && move != 'S');
+    }
+
+    public void compareUserToCroupier(List<Card> hand, int croupierPoints){
+        int userPoints = this.user.sumHand(hand);
+        this.showInfo(hand);
+        this.checkResult(userPoints, croupierPoints);
+    }
+
     public void run(){
         while(this.user.getMoney()>0) {
             this.user.askBid();
             this.giveCards();
-            boolean hasAMove, stand;
-            do {
-                this.showInfo();
-                stand = this.user.askForMove(deck, this.user.getHand());
-                hasAMove = this.user.hasMove(deck, this.user.getHand());
-            }while(hasAMove && !stand);
+            this.userRound(this.user.getHand());
+            if(this.user.isSecondHandActive()){//moves if split on the second hand
+                this.user.setMoney(this.user.getMoney()-this.user.getBid());
+                this.userRound(this.user.getSecondHand());
+            }
             this.croupier.setOnlyFirstCard(false);
-            int userPoints = this.user.sumHand(this.user.getHand());
+            System.out.println("-------------------------------");
             int croupierPoints = this.croupier.makeMove(this.deck, this.croupier.getHand());
-            this.showInfo();
-            this.checkResult(userPoints, croupierPoints);
+            this.compareUserToCroupier(this.user.getHand(), croupierPoints);
+            if(this.user.isSecondHandActive()) {
+                this.compareUserToCroupier(this.user.getSecondHand(), croupierPoints);
+            }
             this.clearHands();
         }
         System.out.println("No money left");
-        //TODO split - make class from hand with Cards and bid for this hand
         //TODO cardcounter
         //TODO exceptions handling
         //TODO double

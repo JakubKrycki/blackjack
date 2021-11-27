@@ -10,6 +10,7 @@ import java.util.List;
 public class Deck {
 
     private int numOfSets = 0;
+    private int cardCounter;
     private List<Card> cards = new ArrayList<>();
 
     public int numOfSets() {
@@ -20,15 +21,12 @@ public class Deck {
         this.numOfSets = numOfSets;
     }
 
-    public List<Card> getCards() {
-        return cards;
-    }
-
     public void setCards(List<Card> cards) {
         this.cards = cards;
     }
 
     public Deck(int numOfSets){
+        this.cardCounter = 0;
         this.numOfSets(numOfSets);
         List<Card> listOfCards = createCardList(this.numOfSets());
         this.setCards(listOfCards);//full and shuffle deck
@@ -58,5 +56,16 @@ public class Deck {
         Card card = this.cards.get(0);
         hand.add(card);
         this.cards.remove(0);
+    }
+
+    public void countCard(Card card){
+        if(card.getPoints()>=2 && card.getPoints()<=6)
+            this.cardCounter++;
+        else if(card.getPoints() == 10 || card.getPoints() == 1)
+            this.cardCounter--;
+    }
+
+    public int getCardCounter(){
+        return this.cardCounter;
     }
 }

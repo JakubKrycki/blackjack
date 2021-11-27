@@ -11,8 +11,8 @@ public class User extends Player {
 
     private int money;
     private int bid;
-    private boolean isSecondHandActive = false;
-    private List<Card> secondHand = new ArrayList<>();
+    private boolean isSecondHandActive;
+    private List<Card> secondHand;
 
     public User() {
         this.username = "Player";
@@ -33,9 +33,15 @@ public class User extends Player {
     }
 
     @Override
-    public void showInfo() {
-        System.out.print(this.username+": ");
-        for (Card card : this.hand) {
+    public void showInfo(List<Card> hand) {
+        if(!this.isSecondHandActive)
+            System.out.print(this.username+"'s hand: ");
+        else if(hand.equals(this.hand)){
+            System.out.print(this.username+" main hand: ");
+        }else{
+            System.out.print(this.username+" second hand: ");
+        }
+        for (Card card : hand) {
             String toPrint = card.getValue() + card.getColor() + " ";
             System.out.print(toPrint);
         }
@@ -59,29 +65,48 @@ public class User extends Player {
     public boolean hasMove(Deck deck, List<Card> hand) {
         ArrayList<Integer> sums = this.sumOfCards(hand);
         int lastSum = sums.get(sums.size() - 1);//the last sum is the biggest (always <= 21)
-        if (lastSum >= 21)//than stand
-            return false;
-        else
-            return true;
+        //than stand
+        return lastSum < 21;
     }
 
-    public boolean askForMove(Deck deck, List<Card> hand){//true if stand
+    public char askForMove(Deck deck, List<Card> hand){
+        boolean split = this.isSplitAvailable();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose option: ");
         System.out.println("Hit (write H)");
         System.out.println("Stand (write S)");
+        if(split)
+            System.out.println("Split (write P)");
         String option = scanner.next();
         switch(option.charAt(0)){
             case 'h':
             case 'H':
                 deck.hit(hand);
-                return false;
+                return 'H';
             case 's':
             case 'S':
-                return true;
+                return 'S';
+            case 'p':
+            case 'P':
+                if(split) {
+                    this.splitCards(deck);
+                    return 'P';
+                }
             default:
                 return askForMove(deck, hand);
         }
+    }
+
+    public boolean isSplitAvailable(){
+        return !this.isSecondHandActive && this.hand.size() == 2 && this.hand.get(0).getPoints() == this.hand.get(1).getPoints();
+    }
+
+    public void splitCards(Deck deck){
+        this.isSecondHandActive=true;
+        this.secondHand.add(this.hand.get(1));
+        this.hand.remove(1);
+        deck.hit(this.hand);
+        deck.hit(this.secondHand);
     }
 
     public void win(int points) {
@@ -117,5 +142,13 @@ public class User extends Player {
 
     public void setBid(int bid) {
         this.bid = bid;
+    }
+
+    public boolean isSecondHandActive() {
+        return isSecondHandActive;
+    }
+
+    public List<Card> getSecondHand() {
+        return secondHand;
     }
 }

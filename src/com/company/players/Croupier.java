@@ -37,14 +37,14 @@ public class Croupier extends Player {
     }
 
     @Override
-    public void showInfo(){
+    public void showInfo(List<Card> hand){
         System.out.print("Croupier: ");
         if(this.onlyFirstCard){
-            Card first = this.hand.get(0);
+            Card first = hand.get(0);
             String toPrint = first.getValue()+first.getColor()+" "+"XX";
             System.out.print(toPrint);
         }else {
-            for (Card card : this.hand) {
+            for (Card card : hand) {
                 String toPrint = card.getValue() + card.getColor() + " ";
                 System.out.print(toPrint);
             }
