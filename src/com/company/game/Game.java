@@ -47,16 +47,16 @@ public class Game {
     public void checkResult(int userPoints, int croupierPoints){
         if(userPoints <= 21){
             if(userPoints > croupierPoints || croupierPoints > 21){
-                System.out.println(this.user.getUsername()+" win");
+                System.out.println(this.user.getUsername()+" wins");
                 this.user.win(userPoints);
             }else if(userPoints == croupierPoints){
                 System.out.println("Draw");
                 this.user.draw();
             }else{
-                System.out.println(this.user.getUsername()+" loose");
+                System.out.println(this.user.getUsername()+" looses");
             }
         }else{
-            System.out.println(this.user.getUsername()+" loose");
+            System.out.println(this.user.getUsername()+" looses");
         }
     }
 
@@ -93,6 +93,7 @@ public class Game {
             if(this.user.isSecondHandActive()) {
                 this.compareUserToCroupier(this.user.getSecondHand(), croupierPoints);
             }
+            this.deck.countCards();
             this.clearHands();
         }
         System.out.println("No money left");

@@ -77,6 +77,7 @@ public class User extends Player {
         System.out.println("Stand (write S)");
         if(split)
             System.out.println("Split (write P)");
+        System.out.println("Write T to see card Counter (up to previous game)");
         String option = scanner.next();
         switch(option.charAt(0)){
             case 'h':
@@ -92,6 +93,9 @@ public class User extends Player {
                     this.splitCards(deck);
                     return 'P';
                 }
+            case 't':
+            case 'T':
+                System.out.println("Card counter: "+deck.getCardCounter());
             default:
                 return askForMove(deck, hand);
         }

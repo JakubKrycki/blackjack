@@ -12,6 +12,7 @@ public class Deck {
     private int numOfSets = 0;
     private int cardCounter;
     private List<Card> cards = new ArrayList<>();
+    private List<Card> thisRoundCards;
 
     public int numOfSets() {
         return numOfSets;
@@ -27,6 +28,7 @@ public class Deck {
 
     public Deck(int numOfSets){
         this.cardCounter = 0;
+        this.thisRoundCards = new ArrayList<Card>();
         this.numOfSets(numOfSets);
         List<Card> listOfCards = createCardList(this.numOfSets());
         this.setCards(listOfCards);//full and shuffle deck
@@ -55,6 +57,7 @@ public class Deck {
     public void hit(List<Card> hand){
         Card card = this.cards.get(0);
         hand.add(card);
+        this.thisRoundCards.add(card);
         this.cards.remove(0);
     }
 
@@ -67,5 +70,12 @@ public class Deck {
 
     public int getCardCounter(){
         return this.cardCounter;
+    }
+
+    public void countCards(){
+        for(Card card: this.thisRoundCards){
+            this.countCard(card);
+        }
+        this.thisRoundCards.clear();
     }
 }
