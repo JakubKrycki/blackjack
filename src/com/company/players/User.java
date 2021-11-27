@@ -4,6 +4,7 @@ import com.company.card.Card;
 import com.company.deck.Deck;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -53,12 +54,16 @@ public class User extends Player {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Actual money: " + this.money);
             System.out.println("Next bid (only nums): ");
-            this.bid = scanner.nextInt();
-            if(this.bid <= this.money) {
-                this.money -= this.bid;
-                return;
-            }else
-                System.out.println("Wrong value - it has to be less than money you've got.");
+            try{
+                this.bid = scanner.nextInt();
+                if(this.bid <= this.money) {
+                    this.money -= this.bid;
+                    return;
+                }else
+                    System.out.println("Wrong value - it has to be less than money you've got.");
+            }catch(InputMismatchException ex){
+                System.out.println("Write only numbers and without spaces!!!");
+            }
         }while(true);
     }
 
