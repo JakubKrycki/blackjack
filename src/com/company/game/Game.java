@@ -53,11 +53,21 @@ public class Game {
                 System.out.println("Draw");
                 this.user.draw();
             }else{
+                if(this.user.isInsurance())
+                    this.checkInsurance();
                 System.out.println(this.user.getUsername()+" looses");
             }
         }else{
+            if(this.user.isInsurance())
+                this.checkInsurance();
             System.out.println(this.user.getUsername()+" looses");
         }
+    }
+
+    public void checkInsurance(){
+         if(this.isCroupierHasAce() && this.croupier.getHand().get(1).getPoints() == 10){
+             this.user.setMoney(this.user.getMoney()+this.user.getBid());
+         }
     }
 
     public void userRound(List<Card> hand){
@@ -66,7 +76,7 @@ public class Game {
         do {//moves on main hand
             System.out.println("-------------------------------");
             this.showInfo(hand);
-            move = this.user.askForMove(deck, hand);
+            move = this.user.askForMove(deck, hand, this.isCroupierHasAce());
             hasAMove = this.user.hasMove(deck, hand);
         }while(hasAMove && move != 'S' && move != 'D');
         if(!hasAMove || move == 'D') {
@@ -79,6 +89,10 @@ public class Game {
         int userPoints = this.user.sumHand(hand);
         this.showInfo(hand);
         this.checkResult(userPoints, croupierPoints);
+    }
+
+    public boolean isCroupierHasAce(){
+        return this.croupier.getHand().get(0).getValue().equals("A");
     }
 
     public void run(){

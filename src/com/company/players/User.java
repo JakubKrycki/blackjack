@@ -14,23 +14,26 @@ public class User extends Player {
     private int bid;
     private boolean isSecondHandActive;
     private List<Card> secondHand;
+    private boolean insurance;
 
     public User() {
         this.username = "Player";
         this.money = 0;
         this.bid = 0;
-        this.hand = new ArrayList<Card>();
+        this.hand = new ArrayList<>();
         this.isSecondHandActive=false;
-        this.secondHand = new ArrayList<Card>();
+        this.secondHand = new ArrayList<>();
+        this.insurance = false;
     }
 
     public User(String username, int money){
         this.username = username;
         this.money = money;
         this.bid = 0;
-        this.hand = new ArrayList<Card>();
+        this.hand = new ArrayList<>();
         this.isSecondHandActive=false;
-        this.secondHand = new ArrayList<Card>();
+        this.secondHand = new ArrayList<>();
+        this.insurance = false;
     }
 
     @Override
@@ -46,7 +49,11 @@ public class User extends Player {
             String toPrint = card.getValue() + card.getColor() + " ";
             System.out.print(toPrint);
         }
-        System.out.println("\n"+this.username+"'s bid: "+this.bid+"\n");
+        System.out.println("\n"+this.username+"'s bid: "+this.bid);
+        if(this.insurance){
+            System.out.println("Insurance: "+((int)(0.5*this.bid)));
+        }
+        System.out.print("\n");
     }
 
     public void askBid() {
@@ -74,9 +81,10 @@ public class User extends Player {
         return lastSum < 21;
     }
 
-    public char askForMove(Deck deck, List<Card> hand){
+    public char askForMove(Deck deck, List<Card> hand, boolean croupierHasAce){
         boolean isSplit = this.isSplitAvailable();
         boolean isDouble = this.isDoubleAvailable();
+        boolean isInsurance = this.isInsuranceAvailable(croupierHasAce);
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose option: ");
         System.out.println("Hit (write H)");
@@ -85,6 +93,8 @@ public class User extends Player {
             System.out.println("Split (write P)");
         if(isDouble)
             System.out.println("Double (write D)");
+        if(isInsurance)
+            System.out.println("Insurance (write I)");
         System.out.println("Write T to see card Counter (up to previous game)");
         String option = scanner.next();
         switch(option.charAt(0)){
@@ -101,7 +111,7 @@ public class User extends Player {
                     this.splitCards(deck);
                     return 'P';
                 }
-                return askForMove(deck, hand);
+                return askForMove(deck, hand, croupierHasAce);
             case 'd':
             case 'D':
                 if(isDouble){
@@ -110,12 +120,20 @@ public class User extends Player {
                     this.bid *= 2;
                     return 'D';
                 }
-                return askForMove(deck, hand);
+                return askForMove(deck, hand, croupierHasAce);
+            case 'i':
+            case 'I':
+                if(this.isInsuranceAvailable(croupierHasAce)){
+                    this.money = this.money - (int)(0.5*this.bid);
+                    this.insurance = true;
+                    return 'I';
+                }
+                return askForMove(deck, hand, croupierHasAce);
             case 't':
             case 'T':
                 System.out.println("Card counter: "+deck.getCardCounter());
             default:
-                return askForMove(deck, hand);
+                return askForMove(deck, hand, croupierHasAce);
         }
     }
 
@@ -125,6 +143,10 @@ public class User extends Player {
 
     public boolean isDoubleAvailable(){
         return !this.isSecondHandActive && this.hand.size() == 2;
+    }
+
+    public boolean isInsuranceAvailable(boolean croupierHasAce){
+        return croupierHasAce && this.hand.size() == 2;
     }
 
     public void splitCards(Deck deck){
@@ -150,6 +172,7 @@ public class User extends Player {
     @Override
     public void clearHand(){
         this.hand.clear();
+        this.insurance = false;
         this.isSecondHandActive = false;
         this.secondHand.clear();
     }
@@ -176,5 +199,9 @@ public class User extends Player {
 
     public List<Card> getSecondHand() {
         return secondHand;
+    }
+
+    public boolean isInsurance(){
+        return this.insurance;
     }
 }
