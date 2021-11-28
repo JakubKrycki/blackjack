@@ -68,7 +68,11 @@ public class Game {
             this.showInfo(hand);
             move = this.user.askForMove(deck, hand);
             hasAMove = this.user.hasMove(deck, hand);
-        }while(hasAMove && move != 'S');
+        }while(hasAMove && move != 'S' && move != 'D');
+        if(!hasAMove || move == 'D') {
+            System.out.println("-------------------------------");
+            this.showInfo(hand);
+        }
     }
 
     public void compareUserToCroupier(List<Card> hand, int croupierPoints){
@@ -97,7 +101,6 @@ public class Game {
             this.clearHands();
         }
         System.out.println("No money left");
-        //TODO double
         //TODO insurance
     }
 

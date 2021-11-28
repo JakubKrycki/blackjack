@@ -75,13 +75,16 @@ public class User extends Player {
     }
 
     public char askForMove(Deck deck, List<Card> hand){
-        boolean split = this.isSplitAvailable();
+        boolean isSplit = this.isSplitAvailable();
+        boolean isDouble = this.isDoubleAvailable();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose option: ");
         System.out.println("Hit (write H)");
         System.out.println("Stand (write S)");
-        if(split)
+        if(isSplit)
             System.out.println("Split (write P)");
+        if(isDouble)
+            System.out.println("Double (write D)");
         System.out.println("Write T to see card Counter (up to previous game)");
         String option = scanner.next();
         switch(option.charAt(0)){
@@ -94,10 +97,20 @@ public class User extends Player {
                 return 'S';
             case 'p':
             case 'P':
-                if(split) {
+                if(isSplit) {
                     this.splitCards(deck);
                     return 'P';
                 }
+                return askForMove(deck, hand);
+            case 'd':
+            case 'D':
+                if(isDouble){
+                    deck.hit(hand);
+                    this.money -= this.bid;
+                    this.bid *= 2;
+                    return 'D';
+                }
+                return askForMove(deck, hand);
             case 't':
             case 'T':
                 System.out.println("Card counter: "+deck.getCardCounter());
@@ -108,6 +121,10 @@ public class User extends Player {
 
     public boolean isSplitAvailable(){
         return !this.isSecondHandActive && this.hand.size() == 2 && this.hand.get(0).getPoints() == this.hand.get(1).getPoints();
+    }
+
+    public boolean isDoubleAvailable(){
+        return !this.isSecondHandActive && this.hand.size() == 2;
     }
 
     public void splitCards(Deck deck){
