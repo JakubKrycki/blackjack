@@ -60,9 +60,11 @@ public class User extends Player {
         do {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Actual money: " + this.money);
-            System.out.println("Next bid (only nums): ");
+            System.out.println("Next bid (write 0 if You want to go all in): ");
             try{
                 this.bid = scanner.nextInt();
+                if(this.bid == 0)
+                    this.bid = this.money;
                 if(this.bid <= this.money) {
                     this.money -= this.bid;
                     return;
